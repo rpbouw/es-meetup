@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data-sources>
+	<data-source id="h2_server-1698babb7a4-76b78b1d5020cc8" provider="generic" driver="h2_server" name="H2 - movie" save-password="true" read-only="false">
+		<connection host="localhost" port="9092" server="" database="~/git/es-meetup/database/data" url="jdbc:h2:tcp://localhost:9092/~/git/es-meetup/database/data" user="sa" type="dev">
+			<network-handler type="PROXY" id="socks_proxy" enabled="false" save-password="true">
+				<property name="socks-port" value="1080"/>
+			</network-handler>
+			<network-handler type="TUNNEL" id="ssh_tunnel" enabled="false" save-password="true">
+				<property name="sshConnectTimeout" value="10000"/>
+				<property name="port" value="22"/>
+				<property name="implementation" value="jsch"/>
+				<property name="authType" value="PASSWORD"/>
+			</network-handler>
+			<bootstrap defaultObject="MOVIES"/>
+		</connection>
+	</data-source>
+	<filters/>
+</data-sources>
