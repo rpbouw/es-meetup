@@ -1,4 +1,5 @@
 import pandas
+import math
 
 
 def read_csv(csv_file):
@@ -12,18 +13,18 @@ def read_csv(csv_file):
                                                           "Genre": "genre",
                                                           "Wiki Page": "wikiPage",
                                                           "Plot": "plot"})
-    print(movies_data_frame.columns)
-    print_column(movies_data_frame,"title")
-    print_column(movies_data_frame,"originEthnicity")
-    print_column(movies_data_frame,"director")
-    print_column(movies_data_frame,"cast")
-    print_column(movies_data_frame,"genre")
-    print_column(movies_data_frame,"wikiPage")
-    print_column(movies_data_frame,"plot")
+    movies_data_frame["releaseYear"] = movies_data_frame["releaseYear"].apply(str)
+    for header in movies_data_frame.keys():
+        exact_max_len = movies_data_frame[header].str.len().max()
+        print(header, determine_rounded_max_len(exact_max_len))
 
 
-def print_column(data_frame, column_name):
-    print(column_name, data_frame[column_name].str.len().max())
+def determine_rounded_max_len(max_len):
+    if max_len > 10:
+        order_of_length = math.floor(math.log10(max_len))
+        value_of_order = round(math.pow(10, order_of_length))
+        max_len = math.floor(max_len / value_of_order) * value_of_order + value_of_order
+    return max_len
 
 
 if __name__ == '__main__':
