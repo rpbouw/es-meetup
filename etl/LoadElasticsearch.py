@@ -23,4 +23,4 @@ def copy_csv_to_elasticsearch(csv_file):
 
 
 if __name__ == '__main__':
-    copy_csv_to_elasticsearch("wiki_movie_plots_deduped.csv")
+    copy_csv_to_elasticsearch("../data/wiki_movie_plots_deduped.csv")
