@@ -3,14 +3,14 @@ import jaydebeapi
 import os
 
 
-def create_and_load_database():
-    create_database()
-    copy_csv_to_database("../data/wiki_movie_plots_deduped.csv")
-    normalize_database()
+def create_and_load_database(csv_file):
+    __create_database_schema()
+    __copy_csv_to_database(csv_file)
+    __fill_normalized_tables()
 
 
-def create_database():
-    connection = get_connection()
+def __create_database_schema():
+    connection = __get_connection()
     try:
         cursor = connection.cursor()
         try:
@@ -47,22 +47,22 @@ def create_database():
         connection.close()
 
 
-def copy_csv_to_database(csv_file):
-    connection = get_connection()
+def __copy_csv_to_database(csv_file):
+    connection = __get_connection()
     try:
         cursor = connection.cursor()
         try:
             cursor.execute('''use movies''')
             with open(csv_file, encoding='UTF-8') as f:
                 for row in csv.DictReader(f):
-                    process_row(cursor, row)
+                    __process_row(cursor, row)
         finally:
             cursor.close()
     finally:
         connection.close()
 
 
-def process_row(cursor, row):
+def __process_row(cursor, row):
     print(row)
     cursor.execute(
         "INSERT INTO stage_in (releaseYear,title,originEthnicity,director,cast,genre,wikiPage,plot) VALUES (?,?,?,?,?,?,?,?)",
@@ -77,8 +77,8 @@ def process_row(cursor, row):
     )
 
 
-def normalize_database():
-    connection = get_connection()
+def __fill_normalized_tables():
+    connection = __get_connection()
     try:
         cursor = connection.cursor()
         try:
@@ -95,8 +95,8 @@ def normalize_database():
         connection.close()
 
 
-def get_connection():
-    database = get_database_name()
+def __get_connection():
+    database = __get_database_name()
     connection = jaydebeapi.connect(jclassname="org.h2.Driver",
                                     url="jdbc:h2:{}".format(database),
                                     driver_args=["sa", ""],
@@ -104,7 +104,7 @@ def get_connection():
     return connection
 
 
-def get_database_name():
+def __get_database_name():
     script_path = os.path.dirname(os.path.realpath(__file__))
     parent_path = os.path.abspath(os.path.join(script_path, os.pardir))
     database = os.path.join(parent_path, 'database/movies')
@@ -112,4 +112,4 @@ def get_database_name():
 
 
 if __name__ == '__main__':
-    create_and_load_database()
+    create_and_load_database("../data/wiki_movie_plots_deduped.csv")
