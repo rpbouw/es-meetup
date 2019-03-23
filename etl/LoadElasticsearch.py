@@ -5,11 +5,19 @@ from elasticsearch.helpers import bulk
 
 def copy_csv_to_elasticsearch(csv_file):
     elasticsearch = Elasticsearch()
+    csv_file = open(csv_file, encoding='UTF-8')
+    dict_reader = csv.DictReader(csv_file)
+    bulk(elasticsearch, elasticsearch_bulk_inserter(dict_reader))
 
-    with open(csv_file, encoding='UTF-8') as f:
-        for csv_model in csv.DictReader(f, skipinitialspace=True):
-            elasticsearch_model = __map_csv_to_elasticsearch_model(csv_model)
-            elasticsearch.index(index="movies", doc_type='_doc', body=elasticsearch_model)
+
+def elasticsearch_bulk_inserter(dict_reader):
+    row_number = 0
+    for csv_model in dict_reader:
+        row_number += 1
+        if row_number % 1000 == 0:
+            print(".", end='')
+        elasticsearch_model = __map_csv_to_elasticsearch_model(csv_model)
+        yield {'_op_type': 'index', '_index': 'movies', '_type': '_doc', '_source': elasticsearch_model}
 
 
 def __map_csv_to_elasticsearch_model(csv_model):
