@@ -32,6 +32,7 @@ def __create_database_schema():
                             ,originEthnicity varchar(20) NOT null)''')
             cursor.execute('''CREATE TABLE movie
                             (movieId int IDENTITY NOT NULL PRIMARY KEY
+                            ,releaseYear varchar(4)
                             ,title varchar(200)
                             ,originEthnicityId int
                             ,director varchar(200)
@@ -40,7 +41,8 @@ def __create_database_schema():
                             ,wikiPage varchar(200)
                             ,plot varchar(40000)
                             )''')
-            cursor.execute('''ALTER TABLE movie ADD CONSTRAINT originEthnicity_fk FOREIGN KEY (originEthnicityId) REFERENCES originEthnicity''')
+            cursor.execute(
+                '''ALTER TABLE movie ADD CONSTRAINT originEthnicity_fk FOREIGN KEY (originEthnicityId) REFERENCES originEthnicity''')
         finally:
             cursor.close()
     finally:
@@ -85,8 +87,8 @@ def __fill_normalized_tables():
             cursor.execute('''use movies''')
             cursor.execute('''INSERT INTO originEthnicity(originEthnicity) 
                             select distinct originEthnicity from stage_in''')
-            cursor.execute('''INSERT INTO movie (originEthnicityId, title, director, cast, genre, wikiPage, plot)
-                            SELECT oe.originEthnicityId,title, director, cast, genre, wikiPage, plot
+            cursor.execute('''INSERT INTO movie (releaseYear, originEthnicityId, title, director, cast, genre, wikiPage, plot)
+                            SELECT releaseYear, oe.originEthnicityId,title, director, cast, genre, wikiPage, plot
                             FROM   stage_in si
                             INNER JOIN originEthnicity oe ON oe.originEthnicity=si.originEthnicity''')
         finally:
@@ -100,16 +102,28 @@ def __get_connection():
     connection = jaydebeapi.connect(jclassname="org.h2.Driver",
                                     url="jdbc:h2:{}".format(database),
                                     driver_args=["sa", ""],
-                                    jars="../h2/bin/h2-1.4.199.jar")
+                                    jars=__get_path_relative_to_project_root('h2/bin/h2-1.4.199.jar'))
     return connection
 
 
 def __get_database_name():
+    return __get_path_relative_to_project_root('database/movies')
+
+
+def __get_csv_file_name():
+    return __get_path_relative_to_project_root('data/wiki_movie_plots_deduped.csv')
+
+
+def __get_path_relative_to_project_root(path):
     script_path = os.path.dirname(os.path.realpath(__file__))
-    parent_path = os.path.abspath(os.path.join(script_path, os.pardir))
-    database = os.path.join(parent_path, 'database/movies')
-    return database
+    print("script=", script_path)
+    project_root = os.path.abspath(os.path.join(script_path, os.pardir))
+    sub_path = project_root
+    for subdir_name in path.split('/'):
+        sub_path = os.path.join(sub_path, subdir_name)
+    print("sub=", sub_path)
+    return sub_path
 
 
 if __name__ == '__main__':
-    create_and_load_database("../data/wiki_movie_plots_deduped.csv")
+    create_and_load_database(__get_csv_file_name())
