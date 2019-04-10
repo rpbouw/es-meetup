@@ -1,0 +1,65 @@
+#insert some document in a not existing index
+POST news/_doc
+{
+  "title": "Real News Today",
+  "text": "Trump builds wall between US and Canada"
+}
+
+#read it back?
+GET news
+
+#read it back using search
+GET news/_search
+
+#read it back by id
+#GET news/<_type>/<_id>
+GET news/_doc/_Zs3zmkBIYj5sWnwp9ai
+
+#insert an improved document
+POST news/_doc
+{
+  "title": "Fake News Today",
+  "text": "Trump builds wall between US and Canada"
+}
+
+#read it back using search
+GET news/_search
+
+#update a document by id
+POST news/_doc/_Zs3zmkBIYj5sWnwp9ai
+{
+  "title": "Fake News Today",
+  "text": "Trump builds wall between US and Canada"
+}
+
+#insert a document with an extra attribute
+POST news/_doc
+{
+  "title": "Real News Today",
+  "summary": "After days of fake news, today we have real news",
+  "text": "Trump builds wall between US and Mexico"
+}
+
+GET news/_search
+#existing documents don't have the new field
+
+#use your own id if you have one
+POST news/_doc/2
+{
+  "title": "Real News Today",
+  "summary": "After days of fake news, today we have real news",
+  "text": "Trump builds wall between US and Mexico"
+}
+
+GET news/_search
+
+#get information from the system
+GET _cat
+#get help for an API
+GET _cat/shards?help
+#column headers on, select headers, sort
+GET _cat/indices?help
+GET _cat/indices?v&h=h,s,i&s=index
+GET _cat/indices/n*?v&h=index&s=index
+
+DELETE news

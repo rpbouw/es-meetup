@@ -1,0 +1,97 @@
+DELETE movies
+
+GET movies/_count
+
+GET movies/_search
+
+
+# mappings and settings
+GET movies
+
+PUT movies
+{
+  "mappings": {
+    "_doc": {
+      "properties": {
+        "cast": {
+          "type": "text"
+        },
+        "director": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "genre": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "originEthnicity": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword",
+              "ignore_above": 256
+            }
+          }
+        },
+        "plot": {
+          "type": "text",
+          "analyzer": "ngram_analyzer",
+          "fields": {
+            "simple": {
+              "type": "text"
+            }
+          }
+        },
+        "releaseYear": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "text",
+          "analyzer": "ngram_analyzer",
+          "fields": {
+            "simple": {
+              "type": "text"
+            }
+          }
+        },
+        "wikiPage": {
+          "type": "keyword"
+        }
+      }
+    }
+  },
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "ngram_analyzer": {
+          "tokenizer": "ngram_tokenizer"
+        }
+      },
+      "tokenizer": {
+        "ngram_tokenizer": {
+          "type": "ngram",
+          "min_gram": 1,
+          "max_gram": 2,
+          "token_chars": [
+            "letter",
+            "digit"
+          ]
+        }
+      }
+    },
+    "index": {
+      "number_of_shards": "1",
+      "number_of_replicas": "0"
+    }
+  }
+}

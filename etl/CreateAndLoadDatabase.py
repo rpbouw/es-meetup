@@ -116,12 +116,10 @@ def __get_csv_file_name():
 
 def __get_path_relative_to_project_root(path):
     script_path = os.path.dirname(os.path.realpath(__file__))
-    print("script=", script_path)
     project_root = os.path.abspath(os.path.join(script_path, os.pardir))
     sub_path = project_root
     for subdir_name in path.split('/'):
         sub_path = os.path.join(sub_path, subdir_name)
-    print("sub=", sub_path)
     return sub_path
 
 
