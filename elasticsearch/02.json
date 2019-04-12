@@ -1,72 +1,84 @@
-DELETE movies
-
 GET movies/_count
 
 GET movies/_search
 
+GET movies/_search
+{
+  "size": 0,
+  "aggs": {
+    "movies_per_year": {
+      "terms": {
+        "field": "releaseYear",
+        "size": 200,
+        "order": {
+          "_key": "desc"
+        }
+      }
+    }
+  }
+}
 
 # mappings and settings
 GET movies
 
-PUT movies
+#create better mappings (and settings)
+PUT movies1
 {
   "mappings": {
-    "_doc": {
-      "properties": {
-        "cast": {
-          "type": "text"
-        },
-        "director": {
-          "type": "text",
-          "fields": {
-            "keyword": {
-              "type": "keyword",
-              "ignore_above": 256
-            }
+    "properties": {
+      "cast": {
+        "type": "text"
+      },
+      "director": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
           }
-        },
-        "genre": {
-          "type": "text",
-          "fields": {
-            "keyword": {
-              "type": "keyword",
-              "ignore_above": 256
-            }
-          }
-        },
-        "originEthnicity": {
-          "type": "text",
-          "fields": {
-            "keyword": {
-              "type": "keyword",
-              "ignore_above": 256
-            }
-          }
-        },
-        "plot": {
-          "type": "text",
-          "analyzer": "ngram_analyzer",
-          "fields": {
-            "simple": {
-              "type": "text"
-            }
-          }
-        },
-        "releaseYear": {
-          "type": "integer"
-        },
-        "title": {
-          "type": "text",
-          "analyzer": "ngram_analyzer",
-          "fields": {
-            "simple": {
-              "type": "text"
-            }
-          }
-        },
-        "wikiPage": {
-          "type": "keyword"
         }
+      },
+      "genre": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "originEthnicity": {
+        "type": "text",
+        "fields": {
+          "keyword": {
+            "type": "keyword",
+            "ignore_above": 256
+          }
+        }
+      },
+      "plot": {
+        "type": "text",
+        "analyzer": "ngram_analyzer",
+        "fields": {
+          "simple": {
+            "type": "text"
+          }
+        }
+      },
+      "releaseYear": {
+        "type": "integer"
+      },
+      "title": {
+        "type": "text",
+        "analyzer": "ngram_analyzer",
+        "fields": {
+          "simple": {
+            "type": "text"
+          }
+        }
+      },
+      "wikiPage": {
+        "type": "keyword"
       }
     }
   },
@@ -95,3 +107,62 @@ PUT movies
     }
   }
 }
+
+#reindex from existing index into new one
+POST _reindex
+{
+  "source": {
+    "index": "movies"
+  },
+  "dest": {
+    "index": "movies1"
+  }
+}
+
+#delete old index
+DELETE movies
+
+#now we broke any client using this index!
+#so we fix that for the future changes
+POST /_aliases
+{
+  "actions": [
+    {
+      "add": {
+        "index": "movies1",
+        "alias": "movies"
+      }
+    }
+  ]
+}
+
+#go back to aggregation query above and so on
+
+#improve search results
+GET movies/_search
+{
+  "query": {
+    "match": {
+      "title.simple": "office space"
+    }
+  }
+}
+
+#most relevant is on top
+
+#'link' to some actor
+GET movies/_search
+{
+  "size": 100,
+  "_source": "cast",
+  "query": {
+    "match": {
+      "cast": "Jennifer Aniston"
+    }
+  }
+}
+
+#we see lots of Jennifers, and Jennifer Aniston at the top
+#if we want ONLY Jennifer Aniston, then what?
+
+

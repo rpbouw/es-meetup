@@ -1,9 +1,13 @@
 # es-meetup
 
-The python scripts in ./etl need 2 modules, see requirements.txt
+The python scripts in ./etl need some modules, see requirements.txt
 
 I used PyCharm with Virtual Environment setup and Python 3.
 
-The scripts expect a h2 database "data" with a "movies" schema in ./database directory.
+Optional steps to simulate a database that could be fed into Elasticsearch in a CQRS model:
+The script ./etc/AnalyzeCsv.py analyses the data set so we know what the database field definitions should be.
+The script ./etc/CreateAndLoadDatabase.py creates an h2 database "movies" with a "movies" schema in ./database directory.
 
-You can create that 
+Step to load the same csv dataset in Elasticsearch:
+Script LoadElasticsearch.py reads csv and loads that in Elasticsearch.
+
