@@ -2,6 +2,12 @@ GET movies/_count
 
 GET movies/_search
 
+# new in v7
+GET movies/_search
+{
+  "track_total_hits": true
+}
+
 GET movies/_search
 {
   "size": 0,
@@ -149,6 +155,24 @@ GET movies/_search
 }
 
 #most relevant is on top
+
+GET movies/_search
+{
+  "_source": "title",
+  "query": {
+    "bool": {
+      "must": [
+      ],
+      "should": [
+        {
+          "match": {
+            "title": "ofise space"
+          }
+        }
+      ]
+    }
+  }
+}
 
 #'link' to some actor
 GET movies/_search

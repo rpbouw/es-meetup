@@ -1,0 +1,10 @@
+PUT /movies/_settings
+{
+    "index" : {
+        "number_of_replicas" : 1
+    }
+}
+
+GET movies/_search
+
+GET _cat/shards/m*?v
