@@ -1,7 +1,8 @@
 from flask import Flask, request, render_template
 from elasticsearch import Elasticsearch
 
-elasticsearch = Elasticsearch()
+# elasticsearch = Elasticsearch()
+elasticsearch = Elasticsearch(['localhost:9200', 'localhost:9201'])
 app = Flask(__name__)
 
 
