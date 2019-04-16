@@ -16,7 +16,6 @@
     <table border="1">
         <tr>
             <td>Title</td>
-            <td>Youtube</td>
             <td>Release Year</td>
             <td>Cast</td>
             <td>Plot</td>
@@ -24,7 +23,6 @@
         {% for movie in movies %}
             <tr>
                 <td><a href="{{movie["_source"]["wikiPage"]}}">{{ movie["_source"]["title"] }}</a></td>
-                <td><a href="https://www.google.com/search?q={{movie["_source"]["title"]}} {{movie["_source"]["cast"]}}&tbm=vid">{{ movie["_source"]["title"] }}</a></td>
                 <td>{{ movie["_source"]["releaseYear"] }}</td>
                 <td>{{ movie["_source"]["cast"] }}</td>
                 <td>{{ movie["_source"]["plot"] }}</td>
