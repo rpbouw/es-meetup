@@ -92,7 +92,8 @@ PUT movies1
     "analysis": {
       "analyzer": {
         "ngram_analyzer": {
-          "tokenizer": "ngram_tokenizer"
+          "tokenizer": "ngram_tokenizer",
+          "filter": ["asciifolding", "lowercase"]
         }
       },
       "tokenizer": {
@@ -124,6 +125,8 @@ POST _reindex
     "index": "movies1"
   }
 }
+
+GET movies1/_count
 
 #delete old index
 DELETE movies
@@ -181,12 +184,11 @@ GET movies/_search
   "_source": "cast",
   "query": {
     "match": {
-      "cast": "Jennifer Aniston"
+      "cast": "jennifer Aniston"
     }
   }
 }
+#diacritics
+#á, à, â, é, è, ê, í, ì, î, ó, ò, ô, ú, ù, û.
 
 #we see lots of Jennifers, and Jennifer Aniston at the top
-#if we want ONLY Jennifer Aniston, then what?
-
-
